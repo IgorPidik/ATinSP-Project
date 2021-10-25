@@ -1,14 +1,13 @@
 import './App.css';
 import {useWeb3React} from "@web3-react/core"
 import {injected} from "./connectors";
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 
 const ethers = require('ethers');
 
 
 function App() {
     const {active, account, library, activate, deactivate} = useWeb3React()
-    const [contractJson, setContractJson] = useState(null)
     const contractAddress = '0x689fD8094594f6E62a6AF65bE25738e024bF7987'
     let authNFTContract = null
 
