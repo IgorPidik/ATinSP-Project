@@ -45,7 +45,7 @@ function App() {
 
     useEffect(() => {
         loadContract()
-    }, [])
+    })
 
     useEffect(() => {
         // listen for changes on an Ethereum address
@@ -69,7 +69,7 @@ function App() {
                         <div>
                             <span>Connected with <b>{account}</b></span>
                             <button onClick={disconnect}
-                                    className={'btn btn-danger'}>Disconnect
+                                    className={'btn btn-danger mx-2'}>Disconnect
                             </button>
                         </div>
                         :
