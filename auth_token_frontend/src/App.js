@@ -1,11 +1,32 @@
 import './App.css';
 import {useWeb3React} from "@web3-react/core"
 import {injected} from "./connectors";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
+
+const ethers = require('ethers');
 
 
 function App() {
     const {active, account, library, activate, deactivate} = useWeb3React()
+    const [contractJson, setContractJson] = useState(null)
+    const contractAddress = '0x689fD8094594f6E62a6AF65bE25738e024bF7987'
+    let authNFTContract = null
+
+    function loadContract() {
+        fetch('compiled_contracts/AuthNFT.json',
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            }
+        ).then((response) => {
+            return response.json();
+        }).then(contractJson => {
+            const abi = contractJson['abi']
+            authNFTContract = new ethers.Contract(contractAddress, abi, library);
+        });
+    }
 
     async function connect() {
         try {
@@ -22,6 +43,10 @@ function App() {
             console.log(ex)
         }
     }
+
+    useEffect(() => {
+        loadContract()
+    }, [])
 
     useEffect(() => {
         // listen for changes on an Ethereum address
