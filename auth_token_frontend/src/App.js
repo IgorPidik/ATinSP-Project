@@ -1,15 +1,17 @@
 import './App.css';
 import {useWeb3React} from "@web3-react/core"
 import {injected} from "./connectors";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
+import AuthView from "./AuthView";
 
 const ethers = require('ethers');
 
 
 function App() {
     const {active, account, library, activate, deactivate} = useWeb3React()
+    const [authNFTContract, setAuthNFTContract] = useState(null)
+
     const contractAddress = '0x689fD8094594f6E62a6AF65bE25738e024bF7987'
-    let authNFTContract = null
 
     function loadContract() {
         fetch('compiled_contracts/AuthNFT.json',
@@ -23,9 +25,15 @@ function App() {
             return response.json();
         }).then(contractJson => {
             const abi = contractJson['abi']
-            authNFTContract = new ethers.Contract(contractAddress, abi, library);
+            setAuthNFTContract(new ethers.Contract(contractAddress, abi, library))
         });
     }
+
+    useEffect(() => {
+        if (library) {
+            loadContract()
+        }
+    }, [library])
 
     async function connect() {
         try {
@@ -43,16 +51,6 @@ function App() {
         }
     }
 
-    useEffect(() => {
-        loadContract()
-    })
-
-    useEffect(() => {
-        // listen for changes on an Ethereum address
-        console.log(`effect, account: ${account}, active: ${active}`)
-        // trigger the effect only on component mount
-    }, [account, active])
-
     function generateSignedMessage() {
         library.getSigner(account).signMessage('auth').then((signature) => {
             console.log(signature)
@@ -60,6 +58,8 @@ function App() {
             console.log(error)
         })
     }
+
+    const activeAndReady = active && authNFTContract
 
     return (
         <div className={'container-fluid m-2'}>
@@ -77,10 +77,10 @@ function App() {
                     }
                 </div>
             </div>
-            {active &&
+            {activeAndReady &&
             <div className={'row justify-content-md-center my-2'}>
                 <div className={'col-auto col-offset'}>
-                    <button className={'btn btn-primary'} onClick={generateSignedMessage}>Generate message</button>
+                    <AuthView contract={authNFTContract}/>
                 </div>
             </div>
             }
