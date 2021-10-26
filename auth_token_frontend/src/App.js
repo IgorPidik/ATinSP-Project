@@ -13,7 +13,7 @@ function App() {
     const [authNFTContract, setAuthNFTContract] = useState(null)
     const [nftIds, setNftIds] = useState([])
 
-    const contractAddress = '0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab'
+    const contractAddress = '0x0290FB167208Af455bB137780163b7B7a9a10C16'
 
     useEffect(() => {
         if (library) {
@@ -61,8 +61,14 @@ function App() {
         }
     }
 
-    const mintNFT = () => {
-        console.log('mint')
+    const mintNFT = async () => {
+        const rawTransaction = await authNFTContract.populateTransaction.mint(account)
+        const mintTransaction = await library.getSigner(account).sendTransaction(rawTransaction)
+        console.log(mintTransaction)
+        mintTransaction.wait().then((receipt) => {
+            console.log(receipt)
+            fetchNFTs()
+        })
     }
 
     const activeAndReady = active && authNFTContract
