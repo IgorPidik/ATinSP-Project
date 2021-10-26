@@ -21,7 +21,6 @@ contract AuthNFT is ERC721Enumerable, Ownable {
     function mint(address recipient) public returns (uint256) {
         // _mint is a built in function that actually puts your NFT onto the blockchain
         _safeMint(recipient, tokenCounter);
-        prepaidDates[tokenCounter][0][1] = true;
         // every time you mint, increment the amount of tokens you've created by 1.
         tokenCounter = tokenCounter + 1;
         // we return the current token count, which is being used as the ID of the NFT.
