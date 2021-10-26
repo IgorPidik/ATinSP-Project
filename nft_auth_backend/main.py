@@ -47,12 +47,13 @@ def restricted_service():
 @app.route('/auth', methods=['POST'])
 def auth():
     signed_message = request.json['signed_message']
-
+    nft_id = request.json['nft_id']
     signer = recover_signer(signed_message)
-    print(f'signer: {signer}')
-    print(f'token: {check_token_paid(signer)}')
-    token = jwt.encode({'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, SECRET_KEY)
-    return jsonify({'token': token})
+    if authenticate(signer, nft_id):
+        token = jwt.encode({'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, SECRET_KEY)
+        return jsonify({'token': token})
+    else:
+        return jsonify({'message': 'unable to authenticate with provided NFT'}), 401
 
 
 def recover_signer(signed_message):
@@ -60,13 +61,14 @@ def recover_signer(signed_message):
     return w3.eth.account.recoverHash(message_hash, signature=signed_message)
 
 
-def check_token_paid(account):
-    return app.auth_nft.functions.paid(account, 0, 7).call()
+def authenticate(account, token_id):
+    now = datetime.datetime.utcnow()
+    return app.auth_nft.functions.authenticate(account, token_id, now.year, now.month).call()
 
 
 if __name__ == '__main__':
     contract_json = json.load(open('compiled_contracts/AuthNFT.json', 'r'))
-    auth_nft = w3.eth.contract(address='0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab', abi=contract_json['abi'])
+    auth_nft = w3.eth.contract(address='0x0290FB167208Af455bB137780163b7B7a9a10C16', abi=contract_json['abi'])
 
     app.auth_nft = auth_nft
     app.run(debug=True)

@@ -23,7 +23,7 @@ function AuthView(props) {
         const signature = await library.getSigner(account).signMessage('auth')
         const requestData = {
             'signed_message': signature,
-            'nftId': selectedNFT
+            'nft_id': selectedNFT
         }
 
         axios.post('http://localhost:5000/auth', requestData).then((response) => {
