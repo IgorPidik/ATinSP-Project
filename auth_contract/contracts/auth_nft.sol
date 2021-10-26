@@ -14,48 +14,21 @@ If you want it to compile, either import it into contract.sol or copy and paste 
 
 contract AuthNFT is ERC721Enumerable, Ownable {
     uint256 public tokenCounter = 0;
+    mapping(uint256 => mapping(uint256 => mapping(uint256 => bool))) public prepaidDates;
 
-
-    struct TokenMeta {
-        string valid;
-    }
-
-    mapping(uint256 => TokenMeta) private _tokenMetas;
-
-    // You can pass in your own NFT name and symbol (like a stock ticker) here!
-    constructor() ERC721("NFT Name", "SYMBOL") {
-        // Put any initialization code inside of the constructor
-    }
-
-    function _setTokenMeta(uint256 tokenId, TokenMeta memory meta) internal {
-        require(_exists(tokenId), "User: Meta set for nonexistent user");
-        _tokenMetas[tokenId] = meta;
-    }
+    constructor() ERC721("AuthNFT", "ANFT") {}
 
     function mint(address recipient) public returns (uint256) {
         // _mint is a built in function that actually puts your NFT onto the blockchain
         _safeMint(recipient, tokenCounter);
-        _setTokenMeta(tokenCounter, TokenMeta("valid"));
-
-        // this will set the tokenURI of the NFT to the tokenURI that you pass in through this function.
-        // _setTokenURI(tokenCounter, tokenURI);
-
+        prepaidDates[tokenCounter][0][1] = true;
         // every time you mint, increment the amount of tokens you've created by 1.
         tokenCounter = tokenCounter + 1;
         // we return the current token count, which is being used as the ID of the NFT.
         return tokenCounter;
     }
 
-    function _getMeta(address owner, uint256 ownedTokenId) public view returns (TokenMeta memory) {
-        uint256 tokenId = tokenOfOwnerByIndex(owner, ownedTokenId);
-        return _tokenMetas[tokenId];
-    }
-
-    function paid(address owner, uint256 year, uint256 month) public view returns (bool) {
-        return month > 6;
-    }
-
-    function authenticate() public returns (bool) {
-        return false;
+    function authenticate(address owner, uint256 tokenId, uint256 year, uint256 month) public view returns (bool) {
+        return (ownerOf(tokenId) == owner) && prepaidDates[tokenId][year][month];
     }
 }
