@@ -3,6 +3,7 @@ import {useWeb3React} from "@web3-react/core"
 import {injected} from "./connectors";
 import React, {useEffect, useState} from "react";
 import AuthView from "./AuthView";
+import axios from "axios";
 
 const ethers = require('ethers');
 
@@ -10,24 +11,9 @@ const ethers = require('ethers');
 function App() {
     const {active, account, library, activate, deactivate} = useWeb3React()
     const [authNFTContract, setAuthNFTContract] = useState(null)
+    const [nftIds, setNftIds] = useState([])
 
-    const contractAddress = '0x689fD8094594f6E62a6AF65bE25738e024bF7987'
-
-    function loadContract() {
-        fetch('compiled_contracts/AuthNFT.json',
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                }
-            }
-        ).then((response) => {
-            return response.json();
-        }).then(contractJson => {
-            const abi = contractJson['abi']
-            setAuthNFTContract(new ethers.Contract(contractAddress, abi, library))
-        });
-    }
+    const contractAddress = '0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab'
 
     useEffect(() => {
         if (library) {
@@ -35,7 +21,31 @@ function App() {
         }
     }, [library])
 
-    async function connect() {
+    useEffect(() => {
+        setNftIds([])
+        fetchNFTs()
+    }, [authNFTContract, account])
+
+    const loadContract = () => {
+        axios.get('compiled_contracts/AuthNFT.json').then(response => {
+            const abi = response.data['abi']
+            setAuthNFTContract(new ethers.Contract(contractAddress, abi, library))
+        });
+    }
+
+    const fetchNFTs = async () => {
+        if (authNFTContract && account) {
+            const balance = await authNFTContract.balanceOf(account)
+            let nftIds = []
+            for (let i = 0; i < balance; i++) {
+                const nftId = await authNFTContract.tokenOfOwnerByIndex(account, i)
+                nftIds.push(nftId.toNumber())
+            }
+            setNftIds(nftIds)
+        }
+    }
+
+    const connect = async () => {
         try {
             await activate(injected)
         } catch (ex) {
@@ -43,7 +53,7 @@ function App() {
         }
     }
 
-    async function disconnect() {
+    const disconnect = () => {
         try {
             deactivate()
         } catch (ex) {
@@ -51,12 +61,8 @@ function App() {
         }
     }
 
-    function generateSignedMessage() {
-        library.getSigner(account).signMessage('auth').then((signature) => {
-            console.log(signature)
-        }).catch((error) => {
-            console.log(error)
-        })
+    const mintNFT = () => {
+        console.log('mint')
     }
 
     const activeAndReady = active && authNFTContract
@@ -79,8 +85,12 @@ function App() {
             </div>
             {activeAndReady &&
             <div className={'row justify-content-md-center my-2'}>
-                <div className={'col-auto col-offset'}>
-                    <AuthView contract={authNFTContract}/>
+                <div className={'col-md-3 col-offset'}>
+                    <AuthView nftIds={nftIds} onMint={mintNFT}/>
+                </div>
+
+                <div className={'col-md-3 col-offset'}>
+                    {/*    Pre-pay view*/}
                 </div>
             </div>
             }

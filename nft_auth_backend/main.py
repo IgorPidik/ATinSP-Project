@@ -5,9 +5,11 @@ import jwt
 from web3 import Web3
 from flask import Flask, request, jsonify
 from eth_account.messages import defunct_hash_message
+from flask_cors import CORS
 
 SECRET_KEY = 'secret'
 app = Flask(__name__)
+CORS(app)
 w3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545'))
 
 
@@ -36,13 +38,13 @@ def token_required(f):
     return decorator
 
 
-@app.route('/protected_service', methods=['GET'])
+@app.route('/restricted_service', methods=['GET'])
 @token_required
-def protected_service():
+def restricted_service():
     return jsonify({'message': 'protected service'})
 
 
-@app.route('/', methods=['POST'])
+@app.route('/auth', methods=['POST'])
 def auth():
     signed_message = request.json['signed_message']
 
@@ -64,7 +66,7 @@ def check_token_paid(account):
 
 if __name__ == '__main__':
     contract_json = json.load(open('compiled_contracts/AuthNFT.json', 'r'))
-    auth_nft = w3.eth.contract(address='0x58638869C0F2ead1f0E0D5eb42F43175e4A16D0a', abi=contract_json['abi'])
+    auth_nft = w3.eth.contract(address='0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab', abi=contract_json['abi'])
 
     app.auth_nft = auth_nft
     app.run(debug=True)
