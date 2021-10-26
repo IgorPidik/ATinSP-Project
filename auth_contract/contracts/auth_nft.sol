@@ -7,10 +7,6 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 // To read more about NFTs, checkout the ERC721 standard:
 // https://eips.ethereum.org/EIPS/eip-721
 
-/**
-NOTE: THIS WILL NOT BE AUTOMATICALLY COMPILED.
-If you want it to compile, either import it into contract.sol or copy and paste the contract directly into there!
-**/
 
 contract AuthNFT is ERC721Enumerable, Ownable {
     uint256 public tokenCounter = 0;
@@ -28,6 +24,7 @@ contract AuthNFT is ERC721Enumerable, Ownable {
     }
 
     function authenticate(address owner, uint256 tokenId, uint256 year, uint256 month) public view returns (bool) {
+        // check whether the token belongs to the address and whether a certain year and month combination has been paid
         return (ownerOf(tokenId) == owner) && prepaidDates[tokenId][year][month];
     }
 }
