@@ -13,8 +13,6 @@ function App() {
     const [authNFTContract, setAuthNFTContract] = useState(null)
     const [nftIds, setNftIds] = useState([])
 
-    const contractAddress = '0x0290FB167208Af455bB137780163b7B7a9a10C16'
-
     useEffect(() => {
         if (library) {
             loadContract()
@@ -29,7 +27,7 @@ function App() {
     const loadContract = () => {
         axios.get('compiled_contracts/AuthNFT.json').then(response => {
             const abi = response.data['abi']
-            setAuthNFTContract(new ethers.Contract(contractAddress, abi, library))
+            setAuthNFTContract(new ethers.Contract(process.env.REACT_APP_AUTH_TOKEN_CONTRACT_ADDRESS, abi, library))
         });
     }
 
