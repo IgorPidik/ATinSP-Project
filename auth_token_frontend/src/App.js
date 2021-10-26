@@ -74,14 +74,14 @@ function App() {
     const activeAndReady = active && authNFTContract
 
     return (
-        <div className={'container-fluid m-2'}>
+        <div className={'container-fluid mt-4'}>
             <div className={'row justify-content-md-center'}>
                 <div className={'col-auto col-offset'}>
                     {active ?
                         <div>
                             <span>Connected with <b>{account}</b></span>
                             <button onClick={disconnect}
-                                    className={'btn btn-danger mx-2'}>Disconnect
+                                    className={'btn btn-danger ms-2'}>Disconnect
                             </button>
                         </div>
                         :
@@ -90,7 +90,7 @@ function App() {
                 </div>
             </div>
             {activeAndReady &&
-            <div className={'row justify-content-md-center my-2'}>
+            <div className={'row justify-content-md-center mt-4'}>
                 <div className={'col-md-3 col-offset'}>
                     <AuthView nftIds={nftIds} onMint={mintNFT}/>
                 </div>

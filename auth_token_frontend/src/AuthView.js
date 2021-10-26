@@ -40,7 +40,7 @@ function AuthView(props) {
         }
         axios.get('http://localhost:5000/restricted_service', {headers: headers}).then((response) => {
             console.log(response.data)
-            setRequestResponse(JSON.stringify(response.data))
+            setRequestResponse(JSON.stringify(response.data.random_number))
         }).catch((e) => {
             console.log(e)
             setRequestResponse(JSON.stringify(e.message))
@@ -48,7 +48,7 @@ function AuthView(props) {
     }
 
     const nftTokenViews = props.nftIds.map((nftId) => {
-        return <div className={'col'} key={nftId} onClick={() => setSelectedNFT(nftId)}>{nftId}</div>
+        return <div className={`col-3 nft ${nftId === selectedNFT && 'nft-selected'}`} key={nftId} onClick={() => setSelectedNFT(nftId)}><span>AuthNFT#{nftId}</span></div>
     })
 
     return (
@@ -58,15 +58,15 @@ function AuthView(props) {
                 <p><b>Step 1:</b> Select or mint NFT token to authenticate with</p>
                 <div className={'row'}>
                     {nftTokenViews}
-                    <div className={'col'} onClick={props.onMint}>+</div>
+                    <div className={'col-3 nft'} onClick={props.onMint}>+</div>
                 </div>
                 <p><b>Step 2:</b> Authenticate</p>
                 {jwt ? <p>Your JWT token: {jwt}</p> :
-                    <button className={'btn btn-primary w-100'} disabled={selectedNFT == null}
+                    <button className={'btn btn-primary w-100 mb-2'} disabled={selectedNFT == null}
                             onClick={authenticate}>Authenticate</button>}
                 {jwtError && <p>Authentication error: {jwtError}</p>}
                 <p><b>Step 3:</b> Make a request to restricted API</p>
-                <button className={'btn btn-primary w-100'} disabled={jwt == null} onClick={makeRequestToRestrictedAPI}>Make a request</button>
+                <button className={'btn btn-primary w-100 mb-2'} disabled={jwt == null} onClick={makeRequestToRestrictedAPI}>Make a request</button>
                 {requestResponse && <p>Response: {requestResponse}</p>}
             </div>
         </div>

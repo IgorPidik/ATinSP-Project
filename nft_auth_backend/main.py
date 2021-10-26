@@ -6,6 +6,7 @@ from web3 import Web3
 from flask import Flask, request, jsonify
 from eth_account.messages import defunct_hash_message
 from flask_cors import CORS
+import random
 
 SECRET_KEY = 'secret'
 app = Flask(__name__)
@@ -41,7 +42,7 @@ def token_required(f):
 @app.route('/restricted_service', methods=['GET'])
 @token_required
 def restricted_service():
-    return jsonify({'message': 'protected service'})
+    return jsonify({'random_number': random.randint(0, 9)})
 
 
 @app.route('/auth', methods=['POST'])
