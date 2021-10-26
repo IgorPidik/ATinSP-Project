@@ -10,22 +10,26 @@ function AuthView(props) {
     const [jwtError, setJwtError] = useState(null)
     const [requestResponse, setRequestResponse] = useState(null)
 
+    // automatically unselect NFT when the account changes
     useEffect(() => {
         setSelectedNFT(null)
-    }, [account, props.nftIds])
+    }, [account])
 
+    // reset JWT and JWT values when different NFT is selected or the account changes
     useEffect(() => {
         setJwt(null)
         setJwtError(null)
     }, [account, selectedNFT])
 
     const authenticate = async () => {
+        // create a signed message using the accounts private key to prove ownership
         const signature = await library.getSigner(account).signMessage('auth')
+
+        // make a request to the backend service to obtain JWT
         const requestData = {
             'signed_message': signature,
             'nft_id': selectedNFT
         }
-
         axios.post('http://localhost:5000/auth', requestData).then((response) => {
             setJwt(response.data.token)
         }).catch((e) => {

@@ -13,17 +13,20 @@ function App() {
     const [authNFTContract, setAuthNFTContract] = useState(null)
     const [nftIds, setNftIds] = useState([])
 
+    // automatically load contract when library (w3 provider) is loaded
     useEffect(() => {
         if (library) {
             loadContract()
         }
     }, [library])
 
+    // automatically fetch NFTs when contract is ready or the user changed their account
     useEffect(() => {
         setNftIds([])
         fetchNFTs()
     }, [authNFTContract, account])
 
+    // load and instantiate contract from local json file
     const loadContract = () => {
         axios.get('compiled_contracts/AuthNFT.json').then(response => {
             const abi = response.data['abi']
@@ -31,6 +34,7 @@ function App() {
         });
     }
 
+    // fetch the ids of NFTs owned by the active account
     const fetchNFTs = async () => {
         if (authNFTContract && account) {
             const balance = await authNFTContract.balanceOf(account)
@@ -43,6 +47,7 @@ function App() {
         }
     }
 
+    // connect to a wallet
     const connect = async () => {
         try {
             await activate(injected)
@@ -51,6 +56,7 @@ function App() {
         }
     }
 
+    // disconnect from a wallet
     const disconnect = () => {
         try {
             deactivate()
@@ -60,11 +66,11 @@ function App() {
     }
 
     const mintNFT = async () => {
+        // create and sign minting transaction
         const rawTransaction = await authNFTContract.populateTransaction.mint(account)
         const mintTransaction = await library.getSigner(account).sendTransaction(rawTransaction)
-        console.log(mintTransaction)
-        mintTransaction.wait().then((receipt) => {
-            console.log(receipt)
+        // wait for the transaction to finish and re-fetch NFTs
+        mintTransaction.wait().then((_) => {
             fetchNFTs()
         })
     }
