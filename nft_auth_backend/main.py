@@ -51,7 +51,7 @@ def recover_signer(signed_message):
     """
     gets the address of the account that signed the message with their private key
     """
-    message_hash = defunct_hash_message(text='auth')
+    message_hash = defunct_hash_message(text='Please sign this message to confirm wallet ownership.')
     return app.w3.eth.account.recoverHash(message_hash, signature=signed_message)
 
 

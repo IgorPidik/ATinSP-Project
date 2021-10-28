@@ -23,7 +23,7 @@ function AuthView(props) {
 
     const authenticate = async () => {
         // create a signed message using the accounts private key to prove ownership
-        const signature = await library.getSigner(account).signMessage('auth')
+        const signature = await library.getSigner(account).signMessage('Please sign this message to confirm wallet ownership.')
 
         // make a request to the backend service to obtain JWT
         const requestData = {
