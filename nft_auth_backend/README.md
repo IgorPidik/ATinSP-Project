@@ -1,5 +1,5 @@
 # NFT Auth Backend
-We still need to add some description
+This service serves as a example for minimal implementation of an API backend, which supports authentication with a NFT. If requirements (payment, ownership of the NFT) are met, then the caller receives JWT token which can then be used to access restricted APIs of this service. 
 
 ## Installing dependencies
 To install dependencies run `pipenv install`

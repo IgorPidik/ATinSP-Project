@@ -1,5 +1,5 @@
 # AuthNFT
-We need to add some general info
+This project contains the smart contract of our AuthNFT. Our implementation extends the ERC721Enumerable implementation by OpenZeppelin. This smart contract acts as a source of truth for authentication in our backend service. It checks whether a given address is the owner of selected NFT and whether all the payment requirements have been satisfied. Furthermore, it contains convinience methods to pre-pay and gain access to our restricted APIs for certain months.
 
 ## Installing dependencies
 ### ganache-cli

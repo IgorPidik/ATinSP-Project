@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../nft_auth_dapp/.idea/nft_auth_dapp.iml" filepath="$PROJECT_DIR$/../nft_auth_dapp/.idea/nft_auth_dapp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/auth_token_frontend.iml" filepath="$PROJECT_DIR$/.idea/auth_token_frontend.iml" />
     </modules>
   </component>
 </project>

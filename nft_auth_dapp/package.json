@@ -1,5 +1,5 @@
 {
-  "name": "auth_token_frontend",
+  "name": "nft_auth_dapp",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
