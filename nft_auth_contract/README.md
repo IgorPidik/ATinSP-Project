@@ -21,8 +21,9 @@ pipx install eth-brownie
 More info: https://eth-brownie.readthedocs.io/en/stable/install.html
 
 ## Run the project
-1. start Ganache CLI with `ganache-cli`
-2. in a separate terminal navigate to the project directory
-3. compile the contract with `brownie compile`
-4. deploy the contract with `brownie run scripts/deploy.py`
-5. grab contract address from the transaction log and upload .env files in the backend and dApp projects
+1. Start Ganache CLI with `ganache-cli`
+2. Connect your crypto wallet application (MetaMask for example) to the address where your personal blockchain is running (default: http://localhost:8545/).
+3. Navigate to the project directory from a separate terminal
+4. Compile the contract with `brownie compile`
+5. Deploy the contract with `brownie run scripts/deploy.py`
+6. Note the address where the contract is deployed, we will need to copy this to `.env` files later
