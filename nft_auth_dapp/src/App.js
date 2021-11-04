@@ -3,6 +3,7 @@ import {useWeb3React} from "@web3-react/core"
 import {injected} from "./connectors";
 import React, {useEffect, useState} from "react";
 import AuthView from "./AuthView";
+import PayView from "./PayView";
 import axios from "axios";
 
 const ethers = require('ethers');
@@ -12,6 +13,7 @@ function App() {
     const {active, account, library, activate, deactivate} = useWeb3React()
     const [authNFTContract, setAuthNFTContract] = useState(null)
     const [nftIds, setNftIds] = useState([])
+    const [paymentData, setPaymentData] = useState([])
 
     // automatically load contract when library (w3 provider) is loaded
     useEffect(() => {
@@ -25,6 +27,11 @@ function App() {
         setNftIds([])
         fetchNFTs()
     }, [authNFTContract, account])
+
+    useEffect(() => {
+        setPaymentData([])
+        fetchMonthsPayed()
+    }, [authNFTContract, account, nftIds])
 
     // load and instantiate contract from local json file
     const loadContract = () => {
@@ -75,6 +82,36 @@ function App() {
         })
     }
 
+    const payMonthNFT = async () => {
+        console.log('PAYMENT')
+        const overrides = {
+            value: ethers.utils.parseEther("0.1")
+        }
+        // TODO: Date is now hardcoded, this needs to be fixed asap
+        const rawTransaction = await authNFTContract.populateTransaction.payMonth(account, 1, 2021, 11, overrides)
+        const payMonthTransaction = await library.getSigner(account).sendTransaction(rawTransaction)
+
+        payMonthTransaction.wait().then((_) => {
+            fetchMonthsPayed()
+        });
+    }
+
+    const fetchMonthsPayed = async () => {
+        let d = new Date()
+        let paymentData = []
+        for (let nft of nftIds) {
+            let paymentDataNft = []
+            for (let i=0; i<6; i++) {
+                let month = (d.getMonth() + i) % 12
+                let year = d.getFullYear() + Math.floor((d.getMonth() + i) / 12)
+                let paymentDataMonth = await authNFTContract.getPaymentData(account, nft, year, month)
+                paymentDataNft.push(paymentDataMonth)
+            }
+            paymentData.push(paymentDataNft)
+        }
+        setPaymentData(paymentData)
+    }
+
     const activeAndReady = active && authNFTContract
 
     return (
@@ -98,9 +135,8 @@ function App() {
                 <div className={'col-md-3 col-offset'}>
                     <AuthView nftIds={nftIds} onMint={mintNFT}/>
                 </div>
-
                 <div className={'col-md-3 col-offset'}>
-                    {/*    Pre-pay view*/}
+                    <PayView nftIds={nftIds} onPayment={payMonthNFT} paymentData={paymentData}/>
                 </div>
             </div>
             }

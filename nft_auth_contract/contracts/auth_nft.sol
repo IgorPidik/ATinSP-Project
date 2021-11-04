@@ -23,6 +23,34 @@ contract AuthNFT is ERC721Enumerable, Ownable {
         return tokenCounter;
     }
 
+    function payMonth(address owner, uint256 tokenId, uint256 year, uint256 month) public payable {
+        // Users can only pay for their own subscription
+        require(
+            ownerOf(tokenId) == owner,
+            "The token does not belong to this address"
+        );
+        // Users can't pay double for a month
+        require(
+            prepaidDates[tokenId][year][month] == false,
+            "This month has already been payed for"
+        );
+        // Users should pay a specific amount
+        require(
+            msg.value == 100000000000000000,
+            "Incorrect amount of ETH provided"
+        );
+        // Mark month as payed
+        prepaidDates[tokenId][year][month] = true;
+    }
+
+    function getPaymentData(address owner, uint256 tokenId, uint256 year, uint256 month) public view returns(bool) {
+        require(
+            ownerOf(tokenId) == owner,
+            "You need to own the token to check the subscriptions"
+        );
+        return prepaidDates[tokenId][year][month];
+    }
+
     function authenticate(address owner, uint256 tokenId, uint256 year, uint256 month) public view returns (bool) {
         // check whether the token belongs to the address and whether a certain year and month combination has been paid
         return (ownerOf(tokenId) == owner) && prepaidDates[tokenId][year][month];
