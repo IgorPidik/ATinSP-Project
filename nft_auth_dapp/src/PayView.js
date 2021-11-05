@@ -39,10 +39,9 @@ function PayView(props) {
             <div className={'row'} key={index}>
                 {index === selectedNFT && items.map((subItems, sIndex) => {
                     return (
-                        <div className={`col-3 nft ${subItems === false && 'month-payed' } 
-                            ${selectedMonth === sIndex && 'nft-selected'}`} key={sIndex}
+                        <div className={`col-3 nft ${selectedMonth === sIndex && 'nft-selected'}`} key={sIndex}
                              onClick={() => setSelectedMonth(sIndex)}>
-                            <span>{index}</span>
+                            <span>Year: {subItems[0]} Month: {subItems[1]}</span>
                         </div>
                     )
                 })}
@@ -54,23 +53,26 @@ function PayView(props) {
     return (
         <div className="card text-white bg-dark mb-3">
             <div className="card-body container-fluid">
-                <h5 className="card-title text-center">Payment</h5>
-                <p>1. Select NFT token</p>
+                <h5 className="card-title text-center">Subscription</h5>
+                <p>Select NFT token</p>
                     <div className={'row'}>
                         {nftTokenViews}
                     </div>
-                <p>2. Select month</p>
-                    {paymentDataView}
-                <DatePicker
-                    selected={date}
-                    onChange={(d) => setDate(d)}
-                    dateFormat="MM/yyyy"
-                    showMonthYearPicker
-                />
-                <p>3. Payment</p>
+                <p>The following months are already payed for:</p>
+                {paymentDataView}
+                <p>Choose a month to subscribe for:</p>
+                <div className={'card-title text-center'}>
+                    <DatePicker
+                        selected={date}
+                        onChange={(d) => setDate(d)}
+                        dateFormat="MM/yyyy"
+                        showMonthYearPicker
+                    />
+                </div>
+
                 <button className={'btn btn-primary w-100 mb-2'} disabled={selectedNFT == null}
                         onClick={payMonth}>
-                    Subscribe
+                        Subscribe
                 </button>
             </div>
         </div>
