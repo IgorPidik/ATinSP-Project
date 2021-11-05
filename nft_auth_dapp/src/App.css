@@ -15,3 +15,7 @@ body {
 .nft-selected {
   border: 2px solid darkred;
 }
+
+.month-payed {
+  background-color: green;
+}

@@ -9,8 +9,10 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
 
 contract AuthNFT is ERC721Enumerable, Ownable {
-    uint256 public tokenCounter = 0;
-    mapping(uint256 => mapping(uint256 => mapping(uint256 => bool))) public prepaidDates;
+    uint256 private tokenCounter = 0;
+    mapping(uint256 => mapping(uint256 => mapping(uint256 => bool))) private prepaidDates;
+
+    // TODO: Use mapping TokenId => Array(Struct(Date))
 
     constructor() ERC721("AuthNFT", "ANFT") {}
 
@@ -25,13 +27,14 @@ contract AuthNFT is ERC721Enumerable, Ownable {
 
     function payMonth(address owner, uint256 tokenId, uint256 year, uint256 month) public payable {
         // Users can only pay for their own subscription
+        // TODO: Use modifier onlyOwner
         require(
-            ownerOf(tokenId) == owner,
+            ownerOf(tokenId) == msg.sender,
             "The token does not belong to this address"
         );
         // Users can't pay double for a month
         require(
-            prepaidDates[tokenId][year][month] == false,
+            !prepaidDates[tokenId][year][month],
             "This month has already been payed for"
         );
         // Users should pay a specific amount
@@ -43,11 +46,7 @@ contract AuthNFT is ERC721Enumerable, Ownable {
         prepaidDates[tokenId][year][month] = true;
     }
 
-    function getPaymentData(address owner, uint256 tokenId, uint256 year, uint256 month) public view returns(bool) {
-        require(
-            ownerOf(tokenId) == owner,
-            "You need to own the token to check the subscriptions"
-        );
+    function getPaymentData(uint256 tokenId, uint256 year, uint256 month) public view returns(bool) {
         return prepaidDates[tokenId][year][month];
     }
 

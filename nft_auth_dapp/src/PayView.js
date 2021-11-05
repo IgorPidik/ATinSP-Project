@@ -1,6 +1,8 @@
 import './App.css';
 import {useWeb3React} from "@web3-react/core"
 import React, {useEffect, useState} from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const ethers = require('ethers');
 
@@ -13,6 +15,15 @@ function PayView(props) {
     useEffect(() => {
         setSelectedNFT(null)
     }, [account])
+
+    const payMonth = () => {
+        let month = date.getMonth() + 1
+        let year = date.getFullYear()
+        console.log(month)
+        console.log(year)
+        props.onPayment(selectedNFT, year, month)
+        console.log('PaymentMonth')
+    }
 
     const nftTokenViews = props.nftIds.map((nftId) => {
         return (
@@ -50,8 +61,15 @@ function PayView(props) {
                     </div>
                 <p>2. Select month</p>
                     {paymentDataView}
+                <DatePicker
+                    selected={date}
+                    onChange={(d) => setDate(d)}
+                    dateFormat="MM/yyyy"
+                    showMonthYearPicker
+                />
                 <p>3. Payment</p>
-                <button className={'btn btn-primary w-100 mb-2'} disabled={selectedNFT == null || selectedMonth == null} onClick={() => props.onPayment()}>
+                <button className={'btn btn-primary w-100 mb-2'} disabled={selectedNFT == null}
+                        onClick={payMonth}>
                     Subscribe
                 </button>
             </div>
