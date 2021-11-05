@@ -99,7 +99,7 @@ function App() {
         if (authNFTContract && account) {
             for (let nftId of nftIds) {
                 let paymentDataNft = await authNFTContract.getPayedMonths(nftId)
-                let paymentDataProcessed = paymentDataNft.map(p => p.map(x => ethers.BigNumber.from(x).toNumber()))
+                let paymentDataProcessed = paymentDataNft.map(p => p.map(x => x.toNumber()))
                 paymentData.push(paymentDataProcessed)
             }
             setPaymentData(paymentData)

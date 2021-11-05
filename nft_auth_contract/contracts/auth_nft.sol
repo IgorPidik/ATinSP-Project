@@ -1,25 +1,22 @@
 // // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.2;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-// import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 // To read more about NFTs, checkout the ERC721 standard:
 // https://eips.ethereum.org/EIPS/eip-721
 
 
-contract AuthNFT is ERC721Enumerable, Ownable {
+contract AuthNFT is ERC721Enumerable {
     struct Date {
         uint256 year;
         uint256 month;
     }
 
     uint256 private tokenCounter = 0;
+    // mapping tokenId -> year -> month -> prepaid
     mapping(uint256 => mapping(uint256 => mapping(uint256 => bool))) private prepaidDates;
-    mapping(uint256 => uint256) private payedMonthsCounter;
+    // mapping from tokenId to array of pre-paid dates
     mapping(uint256 => Date[]) private payedMonths;
-
-    // TODO: Use mapping TokenId => Array(Struct(Date))
 
     constructor() ERC721("AuthNFT", "ANFT") {}
 
@@ -50,22 +47,11 @@ contract AuthNFT is ERC721Enumerable, Ownable {
         );
         // Mark month as payed
         prepaidDates[tokenId][year][month] = true;
-        payedMonthsCounter[tokenId] += 1;
         payedMonths[tokenId].push(Date(year, month));
     }
 
-    function getPayedMonths(uint256 tokenId) public view returns(Date[] memory) {
-        uint256 monthsPayedCount = payedMonthsCounter[tokenId];
-        Date[] memory dates = new Date[](monthsPayedCount);
-        for (uint256 i = 0; i < monthsPayedCount; i++) {
-            Date storage date = payedMonths[tokenId][i];
-            dates[i] = date;
-        }
-        return dates;
-    }
-
-    function getPaymentData(uint256 tokenId, uint256 year, uint256 month) public view returns(bool) {
-        return prepaidDates[tokenId][year][month];
+    function getPayedMonths(uint256 tokenId) public view returns (Date[] memory) {
+        return payedMonths[tokenId];
     }
 
     function authenticate(address owner, uint256 tokenId, uint256 year, uint256 month) public view returns (bool) {
