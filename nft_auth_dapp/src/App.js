@@ -5,7 +5,6 @@ import React, {useEffect, useState} from "react";
 import AuthView from "./AuthView";
 import PayView from "./PayView";
 import axios from "axios";
-import ke from "react-datepicker";
 
 const ethers = require('ethers');
 
