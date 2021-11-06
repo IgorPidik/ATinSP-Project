@@ -5,6 +5,7 @@ import React, {useEffect, useState} from "react";
 import AuthView from "./AuthView";
 import PayView from "./PayView";
 import axios from "axios";
+import ke from "react-datepicker";
 
 const ethers = require('ethers');
 
@@ -14,6 +15,7 @@ function App() {
     const [authNFTContract, setAuthNFTContract] = useState(null)
     const [nftIds, setNftIds] = useState([])
     const [paymentData, setPaymentData] = useState([])
+    const [subscriptionStatus, setSubscriptionStatus] = useState([])
 
     // automatically load contract when library (w3 provider) is loaded
     useEffect(() => {
