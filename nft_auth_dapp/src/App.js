@@ -14,7 +14,6 @@ function App() {
     const [authNFTContract, setAuthNFTContract] = useState(null)
     const [nftIds, setNftIds] = useState([])
     const [paymentData, setPaymentData] = useState([])
-    const [subscriptionStatus, setSubscriptionStatus] = useState([])
 
     // automatically load contract when library (w3 provider) is loaded
     useEffect(() => {

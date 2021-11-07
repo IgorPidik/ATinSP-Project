@@ -2,6 +2,7 @@ import './App.css';
 import {useWeb3React} from "@web3-react/core"
 import React, {useEffect, useState} from "react";
 import axios from "axios";
+import NFTTokenViewsList from "./NFTTokenViewsList";
 
 function AuthView(props) {
     const {account, library} = useWeb3React()
@@ -43,7 +44,6 @@ function AuthView(props) {
             'Authorization': 'Bearer ' + jwt
         }
         axios.get('http://localhost:5000/restricted_service', {headers: headers}).then((response) => {
-            console.log(response.data)
             setRequestResponse(JSON.stringify(response.data.random_number))
         }).catch((e) => {
             console.log(e)
@@ -51,27 +51,51 @@ function AuthView(props) {
         })
     }
 
-    const nftTokenViews = props.nftIds.map((nftId) => {
-        return <div className={`col-3 nft ${nftId === selectedNFT && 'nft-selected'}`} key={nftId} onClick={() => setSelectedNFT(nftId)}><span>AuthNFT#{nftId}</span></div>
-    })
-
     return (
         <div className="card text-white bg-dark mb-3">
             <div className="card-body container-fluid">
                 <h5 className="card-title text-center">Authentication</h5>
-                <p><b>Step 1:</b> Select or mint NFT token to authenticate with</p>
-                <div className={'row'}>
-                    {nftTokenViews}
-                    <div className={'col-3 nft'} onClick={props.onMint}>+</div>
+                <div className={'card text-white bg-dark'}>
+                    {/* Mint */}
+                    <h6 className={'card-header'}>Mint NFT</h6>
+                    <div className={'card-body'}>
+                        <button className={'btn btn-primary w-100 mb-2 mt-3'}
+                                onClick={props.onMint}>
+                            Mint
+                        </button>
+                    </div>
                 </div>
-                <p><b>Step 2:</b> Authenticate</p>
-                {jwt ? <p>Your JWT token: {jwt}</p> :
-                    <button className={'btn btn-primary w-100 mb-2'} disabled={selectedNFT == null}
-                            onClick={authenticate}>Authenticate</button>}
-                {jwtError && <p>Authentication error: {jwtError}</p>}
-                <p><b>Step 3:</b> Make a request to restricted API</p>
-                <button className={'btn btn-primary w-100 mb-2'} disabled={jwt == null} onClick={makeRequestToRestrictedAPI}>Make a request</button>
-                {requestResponse && <p>Response: {requestResponse}</p>}
+                {/* select NFT */}
+                <div className={'card text-white bg-dark'}>
+                    <h6 className={'card-header'}>Select NFT token to authenticate with</h6>
+                    <div className={'card-body'}>
+                        <NFTTokenViewsList nftIds={props.nftIds} selectedNFT={selectedNFT}
+                                           onNFTSelected={setSelectedNFT}/>
+                    </div>
+                </div>
+
+                {/* Auth */}
+                <div className={'card text-white bg-dark'}>
+                    <h6 className={'card-header'}>Authenticate</h6>
+                    <div className={'card-body'}>
+                        <button className={'btn btn-primary w-100 mb-2'} disabled={selectedNFT == null}
+                                onClick={authenticate}>Authenticate
+                        </button>
+                        {jwt && <p>Your JWT token: {jwt}</p>}
+                        {jwtError && <p>Authentication error: {jwtError}</p>}
+                    </div>
+                </div>
+
+                {/* Request to restricted API */}
+                <div className={'card text-white bg-dark'}>
+                    <h6 className={'card-header'}>Make a request to restricted API</h6>
+                    <div className={'card-body'}>
+                        <button className={'btn btn-primary w-100 mb-2'} disabled={jwt == null}
+                                onClick={makeRequestToRestrictedAPI}>Make a request
+                        </button>
+                        {requestResponse && <p>Response: {requestResponse}</p>}
+                    </div>
+                </div>
             </div>
         </div>
     );
